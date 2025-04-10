@@ -31,6 +31,31 @@ def gender_distribution_of_survivors():
     print(f"{female_rate}% of the survivors were female")
 
 
+def survival_rate_with_respect_to_class():
+    print("Survival rate with respect to class")
+    # n_total_passengers = len(df)
+    # n_total_survivors = len(df[df["survived"] == 1])
+
+    n_first_class = len(df[df["class"] == "First"])
+    n_second_class = len(df[df["class"] == "Second"])
+    n_third_class = len(df[df['class'] == "Third"])
+
+    n_first_class_survivor = len(df[(df["class"] == "First") & (df["survived"] == 1)])
+    n_second_class_survivor = len(df[(df["class"] == "Second") & (df["survived"] == 1)])
+    n_third_class_survivor = len(df[(df["class"] == "Third") & (df["survived"] == 1)])
+
+    f_rate = round(n_first_class_survivor / n_first_class * 100, 2)
+    s_rate = round(n_second_class_survivor / n_second_class * 100, 2)
+    t_rate = round(n_third_class_survivor / n_third_class * 100, 2)
+    print(f"First class survival rate: {f_rate}%")
+    print(f"Second class survival rate: {s_rate}%")
+    print(f"Third class survival rate: {t_rate}%")
+
+
 # average_age_of_survivors()
 # survival_rate()
-gender_distribution_of_survivors()
+# gender_distribution_of_survivors()
+# print(df.head(n=10))
+# print(df.columns.tolist())
+# print(df['class'].unique())
+survival_rate_with_respect_to_class()
