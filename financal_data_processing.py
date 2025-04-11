@@ -4,6 +4,18 @@ df = pd.read_csv("Yahoo finance dataset.csv")
 # Data cleaning
 
 
+def z_score_normalization(df):
+    """
+    Apply Z-score normalization to numeric columns in the DataFrame.
+    Non-numeric columns will be left unchanged.
+    """
+    df_numeric = df.select_dtypes(include=['float64', 'int64'])
+    df_scaled = (df_numeric - df_numeric.mean()) / df_numeric.std()
+
+    # To keep original non-numeric columns:
+    return df_scaled.join(df.drop(columns=df_numeric.columns))
+
+
 def remove_low_variance_columns(df, threshold=0.01):
     """
     Removes columns from the DataFrame where variance is below the given
