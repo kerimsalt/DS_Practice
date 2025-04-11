@@ -8,8 +8,6 @@ df = sns.load_dataset('titanic')
 def average_age_of_survivors():
     survivors = df[df['survived'] == 1]
     # Calculate the average age of survivors
-    print(type(survivors))
-    print(len(survivors))
     average_age = survivors['age'].mean()
     print(f"Average age of survivors: {average_age:.2f}")
 
