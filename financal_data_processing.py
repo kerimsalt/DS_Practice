@@ -28,6 +28,7 @@ def min_max_normalization(df):
     df_scaled = df_scaled.join(df.drop(columns=df_numeric.columns))
     print("after")
     print(df_scaled["closing_price"])
+    return df_scaled
 
 
 def remove_low_variance_columns(df, threshold=0.01):
