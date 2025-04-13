@@ -125,6 +125,31 @@ def top_correlated_features(df, top_n=3):
         print(f"{f1} & {f2} → correlation: {corr_value:.3f}")
 
 
+def remove_highly_correlated_features(df, threshold=0.9):
+    df_numeric = df.select_dtypes(include=['float64', 'int64'])
+    corr_matrix = df_numeric.corr().abs()
+
+    # Get upper triangle mask (excluding self-correlation)
+    upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
+
+    # Identify columns to drop
+    to_drop = [col for col in upper.columns if any(upper[col] > threshold)]
+
+    print(f"Dropping {len(to_drop)} highly correlated features: {to_drop}")
+    return df.drop(columns=to_drop)
+
+
+def remove_outliers_by_zscore(df, threshold=3):
+    df_numeric = df.select_dtypes(include=['float64', 'int64'])
+
+    # Compute Z-scores and filter
+    z_scores = np.abs(zscore(df_numeric, nan_policy='omit'))
+    mask = (z_scores < threshold).all(axis=1)
+
+    print(f"Removed {len(df) - mask.sum()} rows as outliers (Z > {threshold})")
+    return df[mask]
+
+
 print("remove low variance")
 remove_low_variance_columns(df, 0.01)
 print("z-score normalization")
@@ -143,3 +168,8 @@ print(df["closing_price"].max())
 
 # histogram_boxplot(df, "closing_price")
 top_correlated_features(df, 3)
+
+# Preprosessing the data
+remove_highly_correlated_features(df, 0.9)
+
+remove_outliers_by_zscore(df, 3)
