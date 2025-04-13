@@ -105,6 +105,26 @@ def histogram_boxplot(df, feature):
     plt.show()
 
 
+def top_correlated_features(df, top_n=3):
+    # Keep only numeric features
+    df_numeric = df.select_dtypes(include=['float64', 'int64'])
+
+    # Compute correlation matrix
+    corr_matrix = df_numeric.corr()
+
+    # Mask the lower triangle and diagonal
+    mask = np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
+    corr_vals = corr_matrix.where(mask)
+
+    # Unstack and sort the correlation values
+    sorted_pairs = corr_vals.unstack().dropna().sort_values(ascending=False)
+
+    # Print top N correlated feature pairs
+    print(f"\nTop {top_n} most strongly correlated feature pairs:")
+    for (f1, f2), corr_value in sorted_pairs.head(top_n).items():
+        print(f"{f1} & {f2} → correlation: {corr_value:.3f}")
+
+
 print("remove low variance")
 remove_low_variance_columns(df, 0.01)
 print("z-score normalization")
@@ -121,4 +141,5 @@ print(df["closing_price"].var())
 print(df["closing_price"].min())
 print(df["closing_price"].max())
 
-histogram_boxplot(df, "closing_price")
+# histogram_boxplot(df, "closing_price")
+top_correlated_features(df, 3)
