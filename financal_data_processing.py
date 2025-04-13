@@ -150,6 +150,34 @@ def remove_outliers_by_zscore(df, threshold=3):
     return df[mask]
 
 
+def grouped_summary_by_risk(df, group_col='risk_score_text', price_col='previous_close', name_col='company'):
+    """
+    Groups dataset by a qualitative risk category and computes:
+    - Mean previous_close price
+    - Company count
+    - List of company names
+
+    Parameters:
+        df: pandas DataFrame
+        group_col: the column to group by
+        price_col: column to compute mean (e.g., 'previous_close')
+        name_col: column with company name (e.g., 'url' or inferred)
+
+    Returns:
+        summary_df: aggregated summary
+    """
+    if name_col not in df.columns:
+        df[name_col] = df['url']  # fallback to URL as company identifier
+
+    grouped = df.groupby(group_col).agg(
+        mean_closing_price=(price_col, 'mean'),
+        company_count=(name_col, 'count'),
+        company_names=(name_col, lambda x: list(x))
+    ).sort_values('mean_closing_price', ascending=False)
+
+    return grouped
+
+
 print("remove low variance")
 remove_low_variance_columns(df, 0.01)
 print("z-score normalization")
@@ -173,3 +201,5 @@ top_correlated_features(df, 3)
 remove_highly_correlated_features(df, 0.9)
 
 remove_outliers_by_zscore(df, 3)
+print(df.columns)
+grouped_summary_by_risk(df)
