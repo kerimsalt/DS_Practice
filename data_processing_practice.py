@@ -1,4 +1,5 @@
 import seaborn as sns
+import matplotlib.pyplot as plt
 df = sns.load_dataset('titanic')
 # print(df.head())
 # print(df.iloc[0, :5])  # Display the first 5 rows and first 5 columns
@@ -38,9 +39,12 @@ def survival_rate_with_respect_to_class():
     n_second_class = len(df[df["class"] == "Second"])
     n_third_class = len(df[df['class'] == "Third"])
 
-    n_first_class_survivor = len(df[(df["class"] == "First") & (df["survived"] == 1)])
-    n_second_class_survivor = len(df[(df["class"] == "Second") & (df["survived"] == 1)])
-    n_third_class_survivor = len(df[(df["class"] == "Third") & (df["survived"] == 1)])
+    n_first_class_survivor = len(df[(df["class"] == "First") &
+                                    (df["survived"] == 1)])
+    n_second_class_survivor = len(df[(df["class"] == "Second") &
+                                     (df["survived"] == 1)])
+    n_third_class_survivor = len(df[(df["class"] == "Third") &
+                                    (df["survived"] == 1)])
 
     f_rate = round(n_first_class_survivor / n_first_class * 100, 2)
     s_rate = round(n_second_class_survivor / n_second_class * 100, 2)
@@ -50,6 +54,29 @@ def survival_rate_with_respect_to_class():
     print(f"Third class survival rate: {t_rate}%")
 
 
+def plot_histogram(df, column, bins=30):
+    """
+    Plots a basic histogram for a given numeric column.
+    """
+    plt.figure(figsize=(8, 5))
+    sns.histplot(df[column], bins=bins, kde=True)
+    plt.title(f'Histogram of {column}')
+    plt.xlabel(column)
+    plt.ylabel('Frequency')
+    plt.show()
+
+
+def plot_boxplot(df, column):
+    """
+    Plots a basic boxplot for a given numeric column.
+    """
+    plt.figure(figsize=(4, 6))
+    sns.boxplot(y=df[column])
+    plt.title(f'Boxplot of {column}')
+    plt.ylabel(column)
+    plt.show()
+
+
 # average_age_of_survivors()
 # survival_rate()
 # gender_distribution_of_survivors()
@@ -57,3 +84,5 @@ def survival_rate_with_respect_to_class():
 # print(df.columns.tolist())
 # print(df['class'].unique())
 survival_rate_with_respect_to_class()
+plot_histogram(df, 'age', bins=20)
+plot_boxplot(df, 'age')

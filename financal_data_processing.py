@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import zscore
 
 df = pd.read_csv("Yahoo finance dataset.csv")
 # Data cleaning
@@ -78,6 +81,30 @@ def remove_highly_correlated_features(df, threshold=0.9):
     return df.drop(columns=to_drop)
 
 
+def histogram_boxplot(df, feature):
+    # Set plot style
+    df = z_score_normalization(df)
+
+    sns.set_theme(style="whitegrid")
+
+    # Create a figure with 2 subplots: histogram + boxplot
+    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 5))
+
+    # Histogram
+    sns.histplot(df[feature], bins=10, kde=False, ax=axs[0])
+    axs[0].set_title(f'Histogram of {feature}')
+    axs[0].set_xlabel(feature)
+    axs[0].set_xlim(0, 1000)  # Adjust this based on your dataset
+
+    # Boxplot
+    sns.boxplot(y=df[feature], ax=axs[1])
+    axs[1].set_title(f'Boxplot of {feature}')
+    axs[1].set_ylim(0, 1000)
+
+    plt.tight_layout()
+    plt.show()
+
+
 print("remove low variance")
 remove_low_variance_columns(df, 0.01)
 print("z-score normalization")
@@ -86,3 +113,12 @@ print("min max normalization")
 min_max_normalization(df)
 print("remove highly correlated columns/features")
 remove_highly_correlated_features(df, 0.95)
+print("Stats")
+print(df["closing_price"].mean())
+print(df["closing_price"].median())
+print(df["closing_price"].std())
+print(df["closing_price"].var())
+print(df["closing_price"].min())
+print(df["closing_price"].max())
+
+histogram_boxplot(df, "closing_price")
